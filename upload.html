@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Envoyer des photos — Photos Foot Club</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="pennant-header">
+    <img src="assets/logo.png" alt="A.S. Valognes" class="club-logo">
+    <p class="pennant-header__title">Photos foot club</p>
+    <p class="pennant-header__subtitle">A.S. Valognes</p>
+  </header>
+
+  <main class="page-shell">
+    <div class="card">
+
+      <div id="form-view">
+        <h1>Envoyer des photos</h1>
+        <p class="lede">Choisis la date du match, l'équipe, puis sélectionne tes photos.</p>
+
+        <div id="status-message" class="status-message"></div>
+
+        <form id="upload-form">
+          <label for="match-date">Date du match</label>
+          <input type="date" id="match-date" name="match-date" required>
+
+          <label for="team">Équipe</label>
+          <select id="team" name="team" required>
+            <option value="" disabled selected>Chargement des équipes...</option>
+          </select>
+
+          <label for="photos">Photos</label>
+          <input type="file" id="photos" name="photos" accept="image/*" multiple required>
+
+          <button type="submit" class="btn-primary" id="submit-btn">Envoyer les photos</button>
+        </form>
+
+        <p class="form-footer">
+          <a href="#" id="logout-link">Se déconnecter</a>
+        </p>
+      </div>
+
+      <div id="success-view" style="display: none;" class="centered-text">
+        <h1>Photos envoyées</h1>
+        <p class="lede" id="success-text"></p>
+        <button type="button" class="btn-primary" id="upload-more-btn">Envoyer d'autres photos</button>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    const session = auth.requireAuth();
+
+    const form = document.getElementById("upload-form");
+    const statusMessage = document.getElementById("status-message");
+    const submitBtn = document.getElementById("submit-btn");
+    const teamSelect = document.getElementById("team");
+    const logoutLink = document.getElementById("logout-link");
+
+    function showStatus(message, type) {
+      statusMessage.textContent = message;
+      statusMessage.className = `status-message visible status-${type}`;
+    }
+
+    function handleSessionExpired() {
+      auth.clearSession();
+      window.location.href = "index.html";
+    }
+
+    // Charger la liste des équipes au chargement de la page
+    (async function loadTeams() {
+      try {
+        const teams = await api.getTeams();
+        teamSelect.innerHTML = '<option value="" disabled selected>Choisis une équipe</option>';
+        for (const team of teams) {
+          const option = document.createElement("option");
+          option.value = team.id;
+          option.textContent = team.name;
+          teamSelect.appendChild(option);
+        }
+      } catch (error) {
+        teamSelect.innerHTML = '<option value="" disabled selected>Impossible de charger les équipes</option>';
+        showStatus("Impossible de charger la liste des équipes. Recharge la page.", "error");
+      }
+    })();
+
+    logoutLink.addEventListener("click", (event) => {
+      event.preventDefault();
+      auth.clearSession();
+      window.location.href = "index.html";
+    });
+
+    document.getElementById("upload-more-btn").addEventListener("click", () => {
+      document.getElementById("success-view").style.display = "none";
+      document.getElementById("form-view").style.display = "block";
+      form.reset();
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      statusMessage.className = "status-message";
+
+      const matchDate = document.getElementById("match-date").value;
+      const teamId = teamSelect.value;
+      const files = document.getElementById("photos").files;
+
+      if (files.length === 0) {
+        showStatus("Sélectionne au moins une photo.", "error");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = `Envoi de ${files.length} photo(s)...`;
+
+      try {
+        const result = await api.uploadPhotos(session.sessionToken, matchDate, teamId, files);
+        document.getElementById("success-text").textContent = result.message;
+        document.getElementById("form-view").style.display = "none";
+        document.getElementById("success-view").style.display = "block";
+      } catch (error) {
+        if (error.message.includes("Session")) {
+          handleSessionExpired();
+          return;
+        }
+        showStatus(error.message, "error");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Envoyer les photos";
+      }
+    });
+  </script>
+
+</body>
+</html>

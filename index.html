@@ -1,3 +1,80 @@
-<html>
-  <h1>Bonjour</h1>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion — Photos Foot Club</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="pennant-header">
+    <img src="assets/logo.png" alt="A.S. Valognes" class="club-logo">
+    <p class="pennant-header__title">Photos foot club</p>
+    <p class="pennant-header__subtitle">A.S. Valognes</p>
+  </header>
+
+  <main class="page-shell">
+    <div class="card">
+      <h1>Connexion</h1>
+      <p class="lede">Connecte-toi pour envoyer les photos des matchs.</p>
+
+      <div id="status-message" class="status-message"></div>
+
+      <form id="login-form">
+        <label for="email">Adresse email</label>
+        <input type="email" id="email" name="email" required autocomplete="email">
+
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" name="password" required autocomplete="current-password">
+
+        <button type="submit" class="btn-primary" id="submit-btn">Se connecter</button>
+      </form>
+
+      <p class="form-footer">
+        Pas encore de compte ? <a href="signup.html">Créer un compte</a>
+      </p>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // Si déjà connecté, on file directement sur la page d'upload
+    if (auth.getSession()) {
+      window.location.href = "upload.html";
+    }
+
+    const form = document.getElementById("login-form");
+    const statusMessage = document.getElementById("status-message");
+    const submitBtn = document.getElementById("submit-btn");
+
+    function showStatus(message, type) {
+      statusMessage.textContent = message;
+      statusMessage.className = `status-message visible status-${type}`;
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      statusMessage.className = "status-message";
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Connexion...";
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      try {
+        const result = await api.login(email, password);
+        auth.saveSession(result.session_token, result.email, result.role);
+        window.location.href = "upload.html";
+      } catch (error) {
+        showStatus(error.message, "error");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Se connecter";
+      }
+    });
+  </script>
+
+</body>
 </html>

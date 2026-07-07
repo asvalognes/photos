@@ -1,0 +1,282 @@
+/* ===================================================================
+   Photos Foot Club — A.S. Valognes
+   Identité visuelle dérivée du logo du club :
+   bleu bandeau, rouge écusson, noir/blanc.
+   Élément signature : le bandeau "pennant" à pointe centrale,
+   qui reprend la forme de l'écusson du club, réutilisé en en-tête
+   de chaque page pour ancrer visuellement l'appli comme "celle du club".
+   =================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --club-blue: #1B5FAE;
+  --club-blue-dark: #123F73;
+  --club-red: #E52421;
+  --club-red-dark: #B81E1C;
+  --club-black: #1A1A1A;
+  --club-white: #FFFFFF;
+  --bg-cream: #F7F5F1;
+  --text-muted: #6B6B66;
+  --border-soft: #E4E0D6;
+
+  --font-display: 'Oswald', 'Arial Narrow', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --radius: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg-cream);
+  font-family: var(--font-body);
+  color: var(--club-black);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* -------------------------------------------------------------
+   En-tête "pennant" — élément signature réutilisé sur chaque page
+   ------------------------------------------------------------- */
+
+.pennant-header {
+  width: 100%;
+  background: var(--club-blue);
+  padding: 1.75rem 1.5rem 3.25rem;
+  clip-path: polygon(0 0, 100% 0, 100% 82%, 50% 100%, 0 82%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.pennant-header__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--club-white);
+  margin: 0.75rem 0 0.15rem;
+}
+
+.pennant-header__subtitle {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: #CFE0F5;
+  margin: 0;
+}
+
+.club-logo {
+  width: 68px;
+  height: auto;
+  display: block;
+}
+
+/* -------------------------------------------------------------
+   Carte principale — chevauche le bas du bandeau pennant
+   ------------------------------------------------------------- */
+
+.page-shell {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  padding-bottom: 2.5rem;
+}
+
+.card {
+  background: var(--club-white);
+  border-radius: var(--radius);
+  border-top: 4px solid var(--club-red);
+  box-shadow: 0 8px 24px rgba(27, 95, 174, 0.08);
+  width: calc(100% - 2.5rem);
+  margin-top: -2.25rem;
+  padding: 1.75rem 1.5rem 2rem;
+}
+
+.card h1 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 0 0 0.35rem;
+  color: var(--club-black);
+}
+
+.card p.lede {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0 0 1.5rem;
+  line-height: 1.5;
+}
+
+/* -------------------------------------------------------------
+   Formulaires
+   ------------------------------------------------------------- */
+
+label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--club-black);
+  margin: 0 0 0.35rem;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  color: var(--club-black);
+  background: var(--club-white);
+  border: 1.5px solid var(--border-soft);
+  border-radius: 10px;
+  margin-bottom: 1.1rem;
+  transition: border-color 0.15s ease;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--club-blue);
+}
+
+.field-error {
+  display: none;
+  font-size: 0.8rem;
+  color: var(--club-red-dark);
+  margin-top: -0.85rem;
+  margin-bottom: 1rem;
+}
+
+.field-error.visible {
+  display: block;
+}
+
+/* -------------------------------------------------------------
+   Boutons
+   ------------------------------------------------------------- */
+
+button.btn-primary {
+  width: 100%;
+  background: var(--club-red);
+  color: var(--club-white);
+  border: none;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+button.btn-primary:hover {
+  background: var(--club-red-dark);
+}
+
+button.btn-primary:disabled {
+  background: #E8B4B3;
+  cursor: not-allowed;
+}
+
+button.btn-secondary {
+  width: 100%;
+  background: transparent;
+  color: var(--club-blue);
+  border: 1.5px solid var(--club-blue);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 0.75rem;
+  transition: background 0.15s ease;
+}
+
+button.btn-secondary:hover {
+  background: #EEF4FB;
+}
+
+/* -------------------------------------------------------------
+   Liens, messages, divers
+   ------------------------------------------------------------- */
+
+a {
+  color: var(--club-blue);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.form-footer {
+  text-align: center;
+  font-size: 0.87rem;
+  color: var(--text-muted);
+  margin-top: 1.4rem;
+}
+
+.status-message {
+  display: none;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.87rem;
+  margin-bottom: 1.1rem;
+  line-height: 1.4;
+}
+
+.status-message.visible {
+  display: block;
+}
+
+.status-message.status-error {
+  background: #FCEBEB;
+  color: var(--club-red-dark);
+}
+
+.status-message.status-success {
+  background: #E6F1FB;
+  color: var(--club-blue-dark);
+}
+
+.spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid #E4E0D6;
+  border-top-color: var(--club-blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 1rem auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.centered-text {
+  text-align: center;
+}

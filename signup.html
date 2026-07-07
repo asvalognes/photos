@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Créer un compte — Photos Foot Club</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="pennant-header">
+    <img src="assets/logo.png" alt="A.S. Valognes" class="club-logo">
+    <p class="pennant-header__title">Photos foot club</p>
+    <p class="pennant-header__subtitle">A.S. Valognes</p>
+  </header>
+
+  <main class="page-shell">
+    <div class="card">
+
+      <div id="form-view">
+        <h1>Créer un compte</h1>
+        <p class="lede">Renseigne ton email et choisis un mot de passe.</p>
+
+        <div id="status-message" class="status-message"></div>
+
+        <form id="signup-form">
+          <label for="email">Adresse email</label>
+          <input type="email" id="email" name="email" required autocomplete="email">
+
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" name="password" required autocomplete="new-password" minlength="8">
+
+          <label for="password-confirm">Confirme le mot de passe</label>
+          <input type="password" id="password-confirm" name="password-confirm" required autocomplete="new-password">
+          <div id="password-mismatch" class="field-error">Les mots de passe ne correspondent pas.</div>
+
+          <button type="submit" class="btn-primary" id="submit-btn">Créer mon compte</button>
+        </form>
+
+        <p class="form-footer">
+          Déjà un compte ? <a href="index.html">Se connecter</a>
+        </p>
+      </div>
+
+      <div id="success-view" style="display: none;">
+        <h1>Vérifie ta boîte mail</h1>
+        <p class="lede">
+          Un email de confirmation vient de t'être envoyé. Clique sur le lien qu'il contient pour activer ton compte.
+        </p>
+
+        <div style="background: var(--bg-cream); border-radius: 12px; padding: 1.25rem; text-align: center; margin-bottom: 1.25rem;">
+          <p style="font-size: 0.85rem; font-weight: 600; margin: 0 0 0.85rem;">Ton QR code de connexion rapide</p>
+          <div id="qrcode" style="display: inline-block; background: white; padding: 10px; border-radius: 8px;"></div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.85rem 0 0; line-height: 1.5;">
+            Imprime-le et garde-le dans la coque de ton téléphone : il te permettra de te reconnecter sans ressaisir ton mot de passe, une fois ton compte vérifié.
+          </p>
+        </div>
+
+        <a href="index.html"><button type="button" class="btn-secondary">Retour à la connexion</button></a>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    const form = document.getElementById("signup-form");
+    const statusMessage = document.getElementById("status-message");
+    const submitBtn = document.getElementById("submit-btn");
+    const passwordMismatch = document.getElementById("password-mismatch");
+
+    function showStatus(message, type) {
+      statusMessage.textContent = message;
+      statusMessage.className = `status-message visible status-${type}`;
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      statusMessage.className = "status-message";
+      passwordMismatch.className = "field-error";
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const passwordConfirm = document.getElementById("password-confirm").value;
+
+      if (password !== passwordConfirm) {
+        passwordMismatch.className = "field-error visible";
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Création en cours...";
+
+      try {
+        const result = await api.signup(email, password);
+        document.getElementById("form-view").style.display = "none";
+        document.getElementById("success-view").style.display = "block";
+
+        const qrLoginUrl = `https://asvalognes.github.io/photos/qr-login.html?token=${result.qr_token}`;
+        new QRCode(document.getElementById("qrcode"), {
+          text: qrLoginUrl,
+          width: 180,
+          height: 180,
+        });
+      } catch (error) {
+        showStatus(error.message, "error");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Créer mon compte";
+      }
+    });
+  </script>
+
+</body>
+</html>

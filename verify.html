@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vérification — Photos Foot Club</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="pennant-header">
+    <img src="assets/logo.png" alt="A.S. Valognes" class="club-logo">
+    <p class="pennant-header__title">Photos foot club</p>
+    <p class="pennant-header__subtitle">A.S. Valognes</p>
+  </header>
+
+  <main class="page-shell">
+    <div class="card centered-text">
+
+      <div id="loading-view">
+        <h1>Vérification en cours</h1>
+        <div class="spinner"></div>
+        <p class="lede">Un instant, on valide ton adresse email...</p>
+      </div>
+
+      <div id="success-view" style="display: none;">
+        <h1>Compte vérifié</h1>
+        <p class="lede">Ton adresse email est confirmée. Tu peux maintenant te connecter.</p>
+        <a href="index.html"><button type="button" class="btn-primary">Se connecter</button></a>
+      </div>
+
+      <div id="error-view" style="display: none;">
+        <h1>Lien invalide</h1>
+        <p class="lede" id="error-text">Ce lien de vérification est invalide ou a expiré.</p>
+        <a href="index.html"><button type="button" class="btn-secondary">Retour à la connexion</button></a>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    (async function () {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("token");
+      const email = params.get("email");
+
+      const loadingView = document.getElementById("loading-view");
+      const successView = document.getElementById("success-view");
+      const errorView = document.getElementById("error-view");
+      const errorText = document.getElementById("error-text");
+
+      if (!token || !email) {
+        loadingView.style.display = "none";
+        errorView.style.display = "block";
+        return;
+      }
+
+      try {
+        await api.verifyEmail(email, token);
+        loadingView.style.display = "none";
+        successView.style.display = "block";
+      } catch (error) {
+        loadingView.style.display = "none";
+        errorText.textContent = error.message;
+        errorView.style.display = "block";
+      }
+    })();
+  </script>
+
+</body>
+</html>
