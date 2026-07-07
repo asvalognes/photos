@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connexion — Photos Foot Club</title>
+  <title>Nouveau QR code — Photos Foot Club</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -16,40 +16,35 @@
 
   <main class="page-shell">
     <div class="card">
-      <h1>Connexion</h1>
-      <p class="lede">Connecte-toi pour envoyer les photos des matchs.</p>
+      <h1>Nouveau QR code</h1>
+      <p class="lede">
+        Téléphone perdu, cassé, ou QR code égaré ? Reconnecte-toi avec ton
+        email et ton mot de passe pour recevoir un nouveau QR code par email.
+        <strong>L'ancien cessera immédiatement de fonctionner.</strong>
+      </p>
 
       <div id="status-message" class="status-message"></div>
 
-      <form id="login-form">
+      <form id="regenerate-form">
         <label for="email">Adresse email</label>
         <input type="email" id="email" name="email" required autocomplete="email">
 
         <label for="password">Mot de passe</label>
         <input type="password" id="password" name="password" required autocomplete="current-password">
 
-        <button type="submit" class="btn-primary" id="submit-btn">Se connecter</button>
+        <button type="submit" class="btn-primary" id="submit-btn">Recevoir mon nouveau QR code</button>
       </form>
 
       <p class="form-footer">
-        Pas encore de compte ? <a href="signup.html">Créer un compte</a>
-      </p>
-      <p class="form-footer">
-        QR code perdu ? <a href="regenerate-qr.html">Recevoir un nouveau</a>
+        <a href="index.html">Retour à la connexion</a>
       </p>
     </div>
   </main>
 
   <script src="js/config.js"></script>
   <script src="js/api.js"></script>
-  <script src="js/auth.js"></script>
   <script>
-    // Si déjà connecté, on file directement sur la page d'upload
-    if (auth.getSession()) {
-      window.location.href = "upload.html";
-    }
-
-    const form = document.getElementById("login-form");
+    const form = document.getElementById("regenerate-form");
     const statusMessage = document.getElementById("status-message");
     const submitBtn = document.getElementById("submit-btn");
 
@@ -62,19 +57,21 @@
       event.preventDefault();
       statusMessage.className = "status-message";
       submitBtn.disabled = true;
-      submitBtn.textContent = "Connexion...";
+      submitBtn.textContent = "Envoi en cours...";
 
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
 
       try {
-        const result = await api.login(email, password);
-        auth.saveSession(result.session_token, result.email, result.role);
-        window.location.href = "upload.html";
+        const result = await api.regenerateQrToken(email, password);
+        showStatus(result.message || "Nouveau QR code envoyé par email.", "success");
+        form.reset();
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Recevoir mon nouveau QR code";
       } catch (error) {
         showStatus(error.message, "error");
         submitBtn.disabled = false;
-        submitBtn.textContent = "Se connecter";
+        submitBtn.textContent = "Recevoir mon nouveau QR code";
       }
     });
   </script>

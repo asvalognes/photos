@@ -86,6 +86,10 @@ const api = {
     return callWebhook("qr-login", { token });
   },
 
+  regenerateQrToken(email, password) {
+    return callWebhook("regenerate-qr-token", { email, password });
+  },
+
   uploadPhotos(sessionToken, matchDate, teamId, files) {
     const formData = new FormData();
     formData.append("session_token", sessionToken);
