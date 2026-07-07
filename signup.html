@@ -47,22 +47,15 @@
         <p class="lede">
           Un email de confirmation vient de t'être envoyé. Clique sur le lien qu'il contient pour activer ton compte.
         </p>
-
-        <div style="background: var(--bg-cream); border-radius: 12px; padding: 1.25rem; text-align: center; margin-bottom: 1.25rem;">
-          <p style="font-size: 0.85rem; font-weight: 600; margin: 0 0 0.85rem;">Ton QR code de connexion rapide</p>
-          <div id="qrcode" style="display: inline-block; background: white; padding: 10px; border-radius: 8px;"></div>
-          <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.85rem 0 0; line-height: 1.5;">
-            Imprime-le et garde-le dans la coque de ton téléphone : il te permettra de te reconnecter sans ressaisir ton mot de passe, une fois ton compte vérifié.
-          </p>
-        </div>
-
+        <p class="lede">
+          Tu y trouveras aussi ton QR code personnel en pièce jointe, à imprimer et glisser dans la coque de ton téléphone pour te reconnecter plus rapidement la prochaine fois.
+        </p>
         <a href="index.html"><button type="button" class="btn-secondary">Retour à la connexion</button></a>
       </div>
 
     </div>
   </main>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="js/config.js"></script>
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
@@ -95,16 +88,9 @@
       submitBtn.textContent = "Création en cours...";
 
       try {
-        const result = await api.signup(email, password);
+        await api.signup(email, password);
         document.getElementById("form-view").style.display = "none";
         document.getElementById("success-view").style.display = "block";
-
-        const qrLoginUrl = `https://asvalognes.github.io/photos/qr-login.html?token=${result.qr_token}`;
-        new QRCode(document.getElementById("qrcode"), {
-          text: qrLoginUrl,
-          width: 180,
-          height: 180,
-        });
       } catch (error) {
         showStatus(error.message, "error");
         submitBtn.disabled = false;

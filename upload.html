@@ -33,7 +33,14 @@
           </select>
 
           <label for="photos">Photos</label>
-          <input type="file" id="photos" name="photos" accept="image/*" multiple required>
+          <div class="file-picker">
+            <input type="file" id="photos" name="photos" accept="image/*" multiple required>
+            <label for="photos" class="file-picker__label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+              Choisir des photos
+            </label>
+          </div>
+          <span class="file-picker__count" id="file-count"></span>
 
           <button type="submit" class="btn-primary" id="submit-btn">Envoyer les photos</button>
         </form>
@@ -63,6 +70,19 @@
     const submitBtn = document.getElementById("submit-btn");
     const teamSelect = document.getElementById("team");
     const logoutLink = document.getElementById("logout-link");
+    const photosInput = document.getElementById("photos");
+    const fileCount = document.getElementById("file-count");
+
+    photosInput.addEventListener("change", () => {
+      const n = photosInput.files.length;
+      if (n === 0) {
+        fileCount.textContent = "";
+      } else if (n === 1) {
+        fileCount.textContent = "1 photo sélectionnée";
+      } else {
+        fileCount.textContent = `${n} photos sélectionnées`;
+      }
+    });
 
     function showStatus(message, type) {
       statusMessage.textContent = message;
@@ -101,6 +121,7 @@
       document.getElementById("success-view").style.display = "none";
       document.getElementById("form-view").style.display = "block";
       form.reset();
+      fileCount.textContent = "";
     });
 
     form.addEventListener("submit", async (event) => {
